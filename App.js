@@ -1,24 +1,18 @@
 import React, { useState } from "react";
-import {
-	StyleSheet,
-	View,
-	Text,
-	TextInput,
-	Button,
-	ScrollView,
-	FlatList,
-} from "react-native";
+import { StyleSheet, View, Button, FlatList } from "react-native";
 import GoalItem from "./components/GoalItem";
 import GoalInput from "./components/GoalInput";
 
 export default function App() {
 	const [courseGoals, setCourseGoals] = useState([]);
+	const [isAddMode, setIsAddMode] = useState(false);
 
 	const addGoalHandler = (goalTitle) => {
 		setCourseGoals((currentGoals) => [
 			...currentGoals,
 			{ id: Math.random().toString(), value: goalTitle },
 		]);
+		setIsAddMode(false);
 	};
 
 	const removeGoalHandler = (goalId) => {
@@ -27,10 +21,19 @@ export default function App() {
 		});
 	};
 
+	const cancelGoalAdditionHandler = () => {
+		setIsAddMode(false);
+	};
+
 	return (
 		// every View uses flexbox by default
 		<View style={styles.screen}>
-			<GoalInput onAddGoal={addGoalHandler} />
+			<Button title="Add New Goal" onPress={() => setIsAddMode(true)} />
+			<GoalInput
+				visible={isAddMode}
+				onAddGoal={addGoalHandler}
+				onCancel={cancelGoalAdditionHandler}
+			/>
 			{/* unlike web, RN not scrollable by default. Use ScrollView for this behaviour */}
 			{/* However, with ScrollView all items are loaded incl those not on the screen. FlatList is better for performance */}
 			<FlatList
